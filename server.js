@@ -76,15 +76,15 @@ app.post('/login', async (req, res) => {
 // Food Request
 app.post('/request-food', async (req, res) => {
     const { name, email, address, phone } = req.body;
-
-    try {
-        const query = 'INSERT INTO food_requests (name, email, address, phone) VALUES ($1, $2, $3, $4)';
-        await pool.query(query, [name, email, address, phone]);
-        res.status(200).send('Food request submitted');
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).send('Server error');
-    }
+    res.status(200).send('Food request submitted');
+    // try {
+    //     const query = 'INSERT INTO food_requests (name, email, address, phone) VALUES ($1, $2, $3, $4)';
+    //     await pool.query(query, [name, email, address, phone]);
+    //     res.status(200).send('Food request submitted');
+    // } catch (err) {
+    //     console.error('Error:', err);
+    //     res.status(500).send('Server error');
+    // }
 });
 
 // Donation
@@ -175,15 +175,15 @@ app.post('/ways-to-give', async (req, res) => {
     if (!name || !email || !feedback) {
         return res.status(400).send('All fields are required');
     }
-
-    try {
-        const query = 'INSERT INTO feedback (name, email, feedback) VALUES ($1, $2, $3)';
-        await pool.query(query, [name, email, feedback]);
-        res.status(200).send('Feedback submitted successfully');
-    } catch (err) {
-        console.error('Error:', err);
-        res.status(500).send('Server error');
-    }
+    res.status(200).send('Feedback submitted successfully');
+    // try {
+    //     const query = 'INSERT INTO feedback (name, email, feedback) VALUES ($1, $2, $3)';
+    //     await pool.query(query, [name, email, feedback]);
+    //     res.status(200).send('Feedback submitted successfully');
+    // } catch (err) {
+    //     console.error('Error:', err);
+    //     res.status(500).send('Server error');
+    // }
 });
 
 
