@@ -1,7 +1,7 @@
 require('dotenv').config();
+const { Pool } = require('pg');
 const express = require('express');
 const bodyParser = require('body-parser');
-const { Pool } = require('pg'); // Import PostgreSQL client
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const jwt = require('jsonwebtoken');
@@ -21,11 +21,84 @@ const pool = new Pool({
     port: process.env.DB_PORT || 5432
 });
 
+// Function to initialize the database tables
+async function initializeDatabase() {
+    const createUsersTable = `
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL UNIQUE,
+            password VARCHAR(100) NOT NULL
+        );
+    `;
+
+    const createFoodRequestsTable = `
+        CREATE TABLE IF NOT EXISTS food_requests (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            address TEXT NOT NULL,
+            phone VARCHAR(20) NOT NULL
+        );
+    `;
+
+    const createDonationsTable = `
+        CREATE TABLE IF NOT EXISTS donations (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            amount NUMERIC(10, 2) NOT NULL
+        );
+    `;
+
+    const createVolunteersTable = `
+        CREATE TABLE IF NOT EXISTS volunteers (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            phone VARCHAR(20) NOT NULL,
+            availability TEXT NOT NULL
+        );
+    `;
+
+    const createInterestsTable = `
+        CREATE TABLE IF NOT EXISTS interests (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            message TEXT NOT NULL
+        );
+    `;
+
+    const createFeedbackTable = `
+        CREATE TABLE IF NOT EXISTS feedback (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            feedback TEXT NOT NULL
+        );
+    `;
+
+    try {
+        await pool.query(createUsersTable);
+        await pool.query(createFoodRequestsTable);
+        await pool.query(createDonationsTable);
+        await pool.query(createVolunteersTable);
+        await pool.query(createInterestsTable);
+        await pool.query(createFeedbackTable);
+        console.log('Database initialized successfully');
+    } catch (err) {
+        console.error('Error initializing database:', err);
+    }
+}
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('public'));
+
+// Initialize database tables
+initializeDatabase();
 
 // Routes
 app.get('/', (req, res) => {
@@ -187,27 +260,17 @@ app.post('/ways-to-give', async (req, res) => {
 });
 
 // Route to test database connection
-server.get('/test-db', async (req, res) => {
+app.get('/test-db', async (req, res) => {
     try {
-        const client = await pool.connect();
-        const result = await client.query('SELECT NOW()');
-        res.json({
-            success: true,
-            message: 'Database connected successfully',
-            time: result.rows[0].now
-        });
-        client.release();
+        const result = await pool.query('SELECT NOW()');
+        res.status(200).json({ message: 'Database connected', timestamp: result.rows[0] });
     } catch (err) {
-        console.error('Database connection error:', err);
-        res.status(500).json({
-            success: false,
-            message: 'Database connection failed',
-            error: err.message
-        });
+        console.error('Error connecting to database:', err);
+        res.status(500).json({ message: 'Database connection error' });
     }
 });
 
 // Start server
 app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}`);
+    console.log(`Server running on port ${port}`);
 });
