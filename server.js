@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { Pool } = require('pg');
 const express = require('express');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg'); // Import PostgreSQL client
@@ -186,6 +187,26 @@ app.post('/ways-to-give', async (req, res) => {
     }
 });
 
+// Route to test database connection
+server.get('/test-db', async (req, res) => {
+    try {
+        const client = await pool.connect();
+        const result = await client.query('SELECT NOW()');
+        res.json({
+            success: true,
+            message: 'Database connected successfully',
+            time: result.rows[0].now
+        });
+        client.release();
+    } catch (err) {
+        console.error('Database connection error:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Database connection failed',
+            error: err.message
+        });
+    }
+});
 
 // Start server
 app.listen(port, () => {
