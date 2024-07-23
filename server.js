@@ -168,6 +168,25 @@ app.get('/profile', authenticateToken, async (req, res) => {
     }
 });
 
+// Handle 'Ways to Give' form submissions
+app.post('/ways-to-give', async (req, res) => {
+    const { name, email, feedback } = req.body;
+
+    if (!name || !email || !feedback) {
+        return res.status(400).send('All fields are required');
+    }
+
+    try {
+        const query = 'INSERT INTO feedback (name, email, feedback) VALUES ($1, $2, $3)';
+        await pool.query(query, [name, email, feedback]);
+        res.status(200).send('Feedback submitted successfully');
+    } catch (err) {
+        console.error('Error:', err);
+        res.status(500).send('Server error');
+    }
+});
+
+
 // Start server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
