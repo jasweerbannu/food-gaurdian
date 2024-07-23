@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ways to Give | Food Guardian</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .ways-to-give-hero {
+            background-image: url('https://source.unsplash.com/1600x900/?donation,help');
+            background-size: cover;
+            background-position: center;
+            color: #0c2203;
+            height: 50vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+        }
+        .ways-to-give-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .ways-to-give-hero p {
+            font-size: 1.25rem;
+        }
+        .ways-to-give-container {
+            padding: 2rem 0;
+        }
+        .card {
+            margin-bottom: 1.5rem;
+        }
+        .footer {
+            background: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="home.html">Food Guardian</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="home.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="get-involved.html">Get Involved</a></li>
+                    <li class="nav-item"><a class="nav-link" href="get-food.html">Get Food</a></li>
+                    <li class="nav-item"><a class="nav-link" href="ways-to-give.html">Ways to Give</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="ways-to-give-hero">
+            <h1>Ways to Give</h1>
+            <p>Discover how you can make a difference and support our mission</p>
+        </section>
+        <section class="container ways-to-give-container">
+            <h2 class="text-center mb-4">How You Can Help</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="images/md.webp" class="card-img-top" alt="Monetary Donations">
+                        <div class="card-body">
+                            <h5 class="card-title">Monetary Donations</h5>
+                            <p class="card-text">Your financial contributions help us fund our programs and outreach efforts. Every bit helps.</p>
+                            <a href="donate.html" class="btn btn-primary">Donate Now</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="images/fd.webp" class="card-img-top" alt="Food Donations">
+                        <div class="card-body">
+                            <h5 class="card-title">Food Donations</h5>
+                            <p class="card-text">Donate non-perishable food items to support those in need. Find drop-off locations near you.</p>
+                            <a href="get-food.html" class="btn btn-primary">Find Out More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <img src="images/vt.webp" class="card-img-top" alt="Volunteering">
+                        <div class="card-body">
+                            <h5 class="card-title">Volunteer</h5>
+                            <p class="card-text">Join our team of volunteers to help with food distribution, events, and more. Your time is valuable.</p>
+                            <a href="volunteer.html" class="btn btn-primary">Get Involved</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container mt-5">
+                <h3 class="text-center">Share Your Feedback</h3>
+                <form id="ways-to-give-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email address</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback">Feedback</label>
+                        <textarea class="form-control" id="feedback" rows="3" placeholder="Enter your feedback" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    <script>
+        document.getElementById('ways-to-give-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const feedback = document.getElementById('feedback').value;
+
+            fetch('/ways-to-give', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, feedback })
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                document.getElementById('ways-to-give-form').reset();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        });
+    </script>
+    <footer class="footer">
+        <p>&copy; 2024 Food Guardian. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

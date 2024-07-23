@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Food Guardian</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .login-container {
+            max-width: 500px; /* Wider container */
+            margin: 5rem auto;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            background-color: #ffffff;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .footer {
+            background: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .already-registered {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        .already-registered a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .already-registered a:hover {
+            text-decoration: underline;
+        }
+        /* Toast styles */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section class="login-container">
+            <div class="login-header">
+                <h1>Food Guardian</h1>
+                <h2 class="text-center mb-4">Login</h2>
+            </div>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+                <div class="already-registered">
+                    <p>Don't have an account? <a href="register.html">Sign up</a></p>
+                </div>
+            </form>
+        </section>
+    </main>
+    <footer class="footer">
+        <p>&copy; 2024 Food Guardian. All rights reserved.</p>
+    </footer>
+    <div id="toast" class="toast"></div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const toast = document.getElementById('toast'); // Define toast here
+            
+            fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.auth) {
+                    localStorage.setItem('token', data.token); // Store token in local storage
+                    toast.textContent = 'Login successful! Redirecting...'; // Set the toast message
+                    toast.classList.add('show'); // Show the toast
+                    setTimeout(() => {
+                        toast.classList.remove('show'); // Hide the toast
+                        window.location.href = 'home.html'; // Redirect to home or dashboard
+                    }, 1000); // Redirect after 2 seconds
+                } else {
+                    toast.textContent = 'Login failed: ' + data.message; // Set the toast message
+                    toast.classList.add('show'); // Show the toast
+                    setTimeout(() => {
+                        toast.classList.remove('show'); // Hide the toast
+                    }, 1000); // Display for 2 seconds
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                toast.textContent = 'An error occurred. Please try again.'; // Set the toast message
+                toast.classList.add('show'); // Show the toast
+                setTimeout(() => {
+                    toast.classList.remove('show'); // Hide the toast
+                }, 1000); // Display for 2 seconds
+            });
+        });
+    </script>
+</body>
+</html>
